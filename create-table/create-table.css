@@ -1,0 +1,116 @@
+body {
+  font-family: Arial, Verdana, Geneva, Lucida, 'lucida grande', helvetica, sans-serif;
+  font-size: 13px;
+}
+input[type="radio"] {
+  -ms-transform: scale(1.5);
+  -webkit-transform: scale(1.5);
+  transform: scale(1.5);
+}
+.form-group {
+  margin: 0!important;
+}
+.icon-search {
+  position: absolute;
+  top: 4px;
+  right: 10%;
+  color: #959393;
+  cursor: pointer;
+}
+th span {
+  cursor: text;
+}
+[contenteditable]:hover {
+  outline: 1px solid rebeccapurple;
+}
+
+td {
+  text-align: center; /* center checkbox horizontally */
+  vertical-align: middle; /* center checkbox vertically */
+}
+.app-list {
+  flex-basis: 282px;
+  min-width: 282px;
+  background: #fff;
+  border-right: 2px solid #dee2e6!important;
+  padding: 5px;
+}
+.app-grid {
+  flex-grow: 1;
+  background: #fff;
+  padding: 5px;
+}
+.draggable {
+  cursor: move;
+  user-select: none;
+}
+.select-checkbox-table {
+  cursor: pointer;
+  user-select: none;
+  height: 32px;
+}
+
+.select-checkbox {
+  cursor: pointer;
+  user-select: none;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.border-2 {
+  border: 2px solid #d4d3d3;
+}
+
+.placeholder {
+  background-color: #edf2f7;
+  border: 2px dashed #cbd5e0;
+}
+.clone-list {
+  border-left: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  display: flex;
+}
+.clone-table {
+  border-collapse: collapse;
+  border: none;
+}
+.clone-table th, .clone-table td {
+  border: 1px solid #ccc;
+  border-left: none;
+  border-top: none;
+  padding: 0.5rem;
+}
+.dragging {
+  background: #fff;
+  border-left: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  z-index: 999;
+}
+.table-th {
+  position: relative;
+}
+
+.resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  cursor: col-resize;
+  user-select: none;
+}
+
+.resizer:hover, .resizing {
+  border-right: 2px solid blue;
+}
+
+.resizable {
+  border: 1px solid gray;
+  height: 100px;
+  width: 100px;
+  position: relative;
+}
+.color-success {
+  color: #28a745 !important
+}

@@ -1,0 +1,472 @@
+#theme("/common/css/listview")
+#theme("/idesk/css/lookup")
+#theme("/idesk/css/select-user")
+#theme("/idesk/css/jquery/jquery.select2")
+#script("/js/common/inet/lib/grid-2.0.min.js")
+#script("/js/idesk/inet/lib/select-user-popover.min.js")
+#script("/js/common/jquery/plugins/jquery.numeric.min.js")
+#script("/js/idesk/inet/lib/inet-paperwork-report-common.min.js")
+#script("/js/idesk/inet/lib/select.min.js")
+#script("/js/idesk/inet/lib/idesk-receiver-column.min.js")
+#script("/js/idesk/inet/lib/idesk-paperwork-ed-lookup.min.js")
+#hasRole("$idk.edoc.lookup.ined")
+    #set($lookup_ined = true)
+#end
+#hasRole("$idk.edoc.lookup.outed")
+    #set($lookup_outed = true)
+#end
+#hasRole("$idk.edoc.lookup.drafted")
+    #set($lookup_drafted = true)
+#end
+#hasRole("$idk.edoc.lookup.intered")
+    #set($lookup_intered = true)
+#end
+<style>
+	div[search-date-content] .icon-remove {
+		margin-right: 19px; font-size: 12px;
+	}
+    div[search-date-content] .icon-remove-circle {
+        margin-right: 19px;
+    }
+    .user-box-group-item {
+        line-height: 22px !important;
+        color: #0188cc !important;
+    }
+    .user-box-group-item:hover {
+        background: #EEF2F4 !important;
+    }
+    .bonsai li.itemdiv {
+        font-size: 13px !important;
+    }
+    .fuelux .datagrid thead th[data-property] {
+        cursor: pointer;
+    }
+    .fuelux .datagrid thead .sort i {
+        float: right;
+        margin-top: 2px;
+    }
+    .datagrid-header-left.span6 {
+        width: 60% !important;
+    }
+    .datagrid-header-right.span6 {
+        width: 40% !important;
+    }
+</style>
+<div id="lookup-widget" class="lookup">
+    <div class="row-fluid">
+        <div id="lookup-tree-container" class="span3" style="margin-left: 10px;">
+            <div id="lookup-select-unit-widget-box" class="widget-box">
+                <div class="widget-header widget-header-flat">
+                    <h5 class="widget-title"><i class="icon-building"></i> <span>$text.getText("Đơn vị và phòng ban")</span></h5>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main" style="overflow: auto;min-height: 300px;position: relative;padding: 2px;">
+                        <div id="lookup-select-unit" style="width:100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lookup-tree-widget-box" class="widget-box">
+                <div class="widget-header widget-header-flat widget-color-yellow">
+                    <h5 class="widget-title"><i class="icon-book"></i> <span>$text.getText('idesk.paperwork.menu.receive_ed')</span></h5>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main" style="padding: 0px;">
+                        <div id="tree-container">
+                            <div id="tree-content" style="overflow: auto;position:relative;padding: 2px 5px 0px 5px;" tabindex="0">
+                                <ol id="lookup-tree" class="bonsai"></ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="lookup-content-main" class="span9" style="margin-left: 10px;">
+            <ul id="lookup-type-menu" class="lookup-menu">
+                #if($lookup_ined)
+                <li data-value="in"><a href="javascript:;"><i class="item icon-arrow-down"></i> <span>$text.getText('idesk.paperwork.menu.receive_ed')</span></a></li>
+                #end
+                #if($lookup_outed)
+                <li data-value="out"><a href="javascript:;"><i class="item icon-arrow-up"></i> <span>$text.getText('idesk.paperwork.menu.publish_ed')</span></a></li>
+                #end
+                #if($lookup_drafted)
+                <li data-value="draft"><a href="javascript:;"><i class="item icon-file-text-alt"></i> <span>$text.getText('idesk.paperwork.menu.draft_doc')</span></a></li>
+                #end
+                #if($lookup_intered)
+                <li data-value="inter"><a href="javascript:;"><i class="item icon-book"></i> <span>$text.getText('idesk.paperwork.menu.internal_ed')</span></a></li>
+                #end
+            </ul>
+            <div class="widget-box" style="margin: 0px;">
+                <div class="widget-header widget-header-flat">
+                    <h5 class="widget-title" style="font-weight: bold;">
+                        <i class="icon-tasks"></i> <span id="lookup-lbl-type"></span>: <span id="lookup-lbl-date"></span>
+                    </h5>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main" style="padding: 0px;">
+                        <div id="grid-container">
+                            <div id="grid-content" style="overflow: hidden;position:relative;padding: 0px 5px 0px 5px;">
+                                <div id="lookup-basic-search" class="hide">
+                                    <div class="row-fluid" style="display: flex;">
+                                        <div data-expand-hide="true" style="width: 130px;">
+                                            <div class="row-fluid">
+                                                <select id="lookup-basic-select-date-range" class="span12">
+                                                    <option value="today">Trong ngày</option>
+                                                    <option value="yesterday">Hôm qua</option>
+                                                    <option value="year">Trong năm</option>
+                                                    <option value="month">Trong tháng</option>
+                                                    <option value="quarter">Trong quý</option>
+                                                    <option value="week">Trong tuần</option>
+                                                    <option value="prev_month">Tháng trước</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div data-expand-hide="true" search-date-content class="input-icon input-icon-right date" style="padding-left: 1px;width: 140px;">
+                                            <input type="text" id="lookup-basic-search-txt-from-date" class="span12 date-picker" style="padding-right: 38px !important;">
+                                            <i class="icon-calendar"></i>
+                                            <i id="lookup-basic-search-btn-remove-from-date" class="icon-remove-circle"></i>
+                                        </div>
+                                        <div data-expand-hide="true" search-date-content class="input-icon input-icon-right date" style="padding-left: 1px;width: 140px;">
+                                            <input type="text" id="lookup-basic-search-txt-to-date" class="span12 date-picker" style="padding-right: 38px !important;">
+                                            <i class="icon-calendar"></i>
+                                            <i id="lookup-basic-search-btn-remove-to-date" class="icon-remove-circle"></i>
+                                        </div>
+
+                                        <div data-expand-hide="true" style="width: auto;min-width: 150px;padding-left: 1px;">
+                                            <div class="row-fluid">
+                                                <span class="input-icon input-icon-right span12">
+                                                    <input id="lookup-basic-search-txt-keyword" type="text" class="span12" placeholder="Từ khóa"/>
+                                                    <i data-action-search="expand" class="icon-caret-down" style="font-size: 22px;right: 25px;cursor: pointer" title='$text.getText("idesk.paperwork.ed.search_advance")'></i>
+                                                    <i data-action-search="search" class="icon-search" title='$text.getText("idesk.paperwork.ed.search")'></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="lookup-advance-search" class="dropdown-menu advance-search dropdown-caret" style="margin-top: -50px;">
+                                    <div style="width:100%;overflow: auto;max-height: 375px">
+                                    <div class="row-fluid">
+                                        <div class="span6">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-subject">
+                                                    $text.getText("idesk.paperwork.ed.subject"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-subject" class="span12"/>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-sign-number">
+                                                    $text.getText("idesk.paperwork.ed.sign_number_s"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-sign-number" class="span12"/>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-author">
+                                                    $text.getText("idesk.paperwork.ed.agency_author"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-author" class="span12"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div out-draft-content class="row-fluid" style="display: none;">
+                                        <div class="span6">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label"  for="lookup-advance-search-txt-composed-unit">
+                                                    $text.getText("idesk.paperwork.ed.composed_unit"):
+                                                </label>
+                                                <div class="row-fluid">
+                                                    <input type="text" id="lookup-advance-search-txt-composed-unit" class="span12"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label"  for="lookup-advance-search-txt-composer">
+                                                    $text.getText("idesk.paperwork.ed.composer"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-composer" class="span12"/>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label"  for="lookup-advance-search-txt-signer">
+                                                    $text.getText("idesk.paperwork.ed.signer"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-signer" class="span12"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row-fluid">
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-doc-from-date">
+                                                    $text.getText("idesk.paperwork.ed.docdate_from_date"):
+                                                </label>
+                                                <div class="row-fluid input-icon input-icon-right date">
+                                                    <input type="text" id="lookup-advance-search-txt-doc-from-date" class="span12 date-picker"/>
+                                                    <i class="icon-calendar"></i>
+                                                    <i data-action="remove" class="icon-remove-circle" style="right: 25px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-doc-to-date">
+                                                    $text.getText("idesk.paperwork.ed.to_date"):
+                                                </label>
+                                                <div class="row-fluid input-icon input-icon-right date">
+                                                    <input type="text" id="lookup-advance-search-txt-doc-to-date" class="span12 date-picker"/>
+                                                    <i class="icon-calendar"></i>
+                                                    <i data-action="remove" class="icon-remove-circle" style="right: 25px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-category">
+                                                    $text.getText("idesk.paperwork.ed.category"):
+                                                </label>
+                                                <div class="row-fluid input-icon input-icon-right date">
+                                                    <input type="text" id="lookup-advance-search-txt-category" placeholder="$text.getText('idesk.paperwork.ed.category')" class="span12" maxlength="32"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div in-out-inter-doc-content class="span3" style="display: none;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-book">
+                                                    $text.getText("idesk.paperwork.ed.book_in"):
+                                                </label>
+                                                <div class="row-fluid">
+                                                    <input type="text" id="lookup-advance-search-txt-book" class="span12"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div draft-doc-content class="span3" style="display: none;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label"  for="lookup-advance-search-draft-txt-final-handler">
+                                                    $text.getText("idesk.paperwork.ed.final_handler_name"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-draft-txt-final-handler" class="span12"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row-fluid">
+                                        <div in-out-inter-doc-content class="span3" style="display: none;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-number-from">
+                                                    $text.getText("idesk.paperwork.ed.number_in_from"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-number-from" class="mask-interger span12"/>
+                                            </div>
+                                        </div>
+                                        <div in-out-inter-doc-content class="span3" style="display: none;margin-right: 15px;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-number-to">
+                                                    $text.getText("idesk.paperwork.ed.to_number"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-number-to" class="mask-interger span12"/>
+                                            </div>
+                                        </div>
+                                        <div class="span3" style="margin-left: 0;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-steering-type">
+                                                    $text.getText("Văn bản"):
+                                                </label>
+                                                <select id="lookup-advance-search-select-steering-type" class="span12">
+                                                    <option value="-1" selected="selected">$text.getText("Tất cả")</option>
+                                                    <option value="0">$text.getText("Không là văn bản chỉ đạo")</option>
+                                                    <option value="1">$text.getText("Văn bản chỉ đạo")</option>
+                                                    <option value="2">$text.getText("Văn bản trả lời cho văn bản chỉ đạo")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-biz-doc-type">
+                                                    $text.getText("Loại nghiệp vụ"):
+                                                </label>
+                                                <select id="lookup-advance-search-select-biz-doc-type" class="span12">
+                                                    <option value="" selected="selected">$text.getText("Tất cả")</option>
+                                                    <option value="0">$text.getText("Văn bản mới")</option>
+                                                    <option value="1">$text.getText("Văn bản thu hồi")</option>
+                                                    <option value="3">$text.getText("Văn bản thay thế")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div in-doc-content class="row-fluid">
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-book-from-date">
+                                                    $text.getText("Ngày đến từ ngày"):
+                                                </label>
+                                                <div class="row-fluid input-icon input-icon-right date">
+                                                    <input type="text" id="lookup-advance-search-txt-book-from-date" class="span12 date-picker"/>
+                                                    <i class="icon-calendar"></i>
+                                                    <i data-action="remove" class="icon-remove-circle" style="right: 25px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-book-to-date">
+                                                    $text.getText("đến ngày"):
+                                                </label>
+                                                <div class="row-fluid input-icon input-icon-right date">
+                                                    <input type="text" id="lookup-advance-search-txt-book-to-date" class="span12 date-picker"/>
+                                                    <i class="icon-calendar"></i>
+                                                    <i data-action="remove" class="icon-remove-circle" style="right: 25px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-field">
+                                                    $text.getText("idesk.paperwork.ed.field"):
+                                                </label>
+                                                <div class="row-fluid">
+                                                    <input type="text" id="lookup-advance-search-txt-field" placeholder="$text.getText('idesk.paperwork.ed.field')" class="span12"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-publisher-unit">
+                                                    $text.getText("idesk.paperwork.ed.publisher_unit"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-publisher-unit" class="span12"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div in-out-doc-content class="row-fluid">
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-priority">$text.getText("idesk.paperwork.ed.priority"):</label>
+                                                <select id="lookup-advance-search-select-priority" class="span12">
+                                                    <option value="-1" selected="selected">$text.getText("Tất cả")</option>
+                                                    <option value="0">$text.getText("idesk.paperwork.ed.priority_normal")</option>
+                                                    <option value="1">$text.getText("idesk.paperwork.ed.priority_high")</option>
+                                                    <option value="2">$text.getText("idesk.paperwork.ed.priority_upper_high")</option>
+                                                    <option value="3">$text.getText("idesk.paperwork.ed.priority_express")</option>
+                                                    <option value="4">$text.getText("idesk.paperwork.ed.priority_expr_time")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-security">$text.getText("idesk.paperwork.ed.security"):</label>
+                                                <select id="lookup-advance-search-select-security" class="span12">
+                                                    <option value="-1" selected="selected">$text.getText("idesk.paperwork.ed.all")</option>
+                                                    <option value="0">$text.getText("idesk.paperwork.ed.normal")</option>
+                                                    <option value="1">$text.getText("idesk.paperwork.ed.secret")</option>
+                                                    <option value="2">$text.getText("idesk.paperwork.ed.medium_secret")</option>
+                                                    <option value="3">$text.getText("idesk.paperwork.ed.high_secret")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div out-doc-content class="span3" style="display: none;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-out-field">
+                                                    $text.getText("idesk.paperwork.ed.field"):
+                                                </label>
+                                                <div class="row-fluid">
+                                                    <input type="text" id="lookup-advance-search-select-out-field" placeholder="$text.getText('idesk.paperwork.ed.field')" class="span12"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div out-doc-content class="span3" style="display: none;">
+                                            <label style="margin-top: 30px;">
+                                                <input type="checkbox" id="lookup-advance-search-out-chk-communication">
+                                                <span class="lbl"> Văn bản có gửi liên thông</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div in-doc-content class="row-fluid" style="padding-top: 5px;">
+                                        <div class="span3">
+                                            <label>
+                                                <input type="checkbox" id="lookup-advance-search-chk-retrieve">
+                                                <span class="lbl"> Là văn bản đã bị thu hồi</span>
+                                            </label>
+                                        </div>
+                                        <div class="span3">
+                                            <label>
+                                                <input type="checkbox" id="lookup-advance-search-in-chk-communication" checked="checked">
+                                                <span class="lbl"> Văn bản liên thông</span>
+                                            </label>
+                                        </div>
+                                        <div class="span3">
+                                            <label>
+                                                <input type="checkbox" id="lookup-advance-search-chk-paper" checked="checked">
+                                                <span class="lbl"> Văn bản giấy</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <hr in-out-doc-content style="margin: 5px 0;border: 1px solid #fff;">
+                                    <div in-out-doc-content class="row-fluid" style="display: none;">
+                                        <div class="span6">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-receiver">
+                                                    $text.getText("Người xử lý"):
+                                                </label>
+                                                <div class="lpopover">
+                                                    <div id="lookup-advance-search-select-receiver" class="span12" style="background: #fff;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div in-doc-content final-in-container class="span3" style="display: none;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-in-txt-final-handler">
+                                                    $text.getText("idesk.paperwork.ed.final_handler_name"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-in-txt-final-handler" class="span12" style="margin-top: 10px;"/>
+                                            </div>
+                                        </div>
+                                        <div out-doc-content final-out-container  class="span3" style="display: none;">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-txt-final-check">
+                                                    $text.getText("idesk.paperwork.ed.final_check_name"):
+                                                </label>
+                                                <input type="text" id="lookup-advance-search-txt-final-check" class="span12" style="margin-top: 10px;"/>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div class="row-fluid">
+                                                <label class="ilabel control-label" for="lookup-advance-search-select-process-status">
+                                                    $text.getText("Trạng thái xử lý"):
+                                                </label>
+                                                <select id="lookup-advance-search-select-process-status" class="span12" style="margin-top: 10px;">
+                                                    <option value="" selected="selected">$text.getText("Tất cả")</option>
+                                                    <option value="processing">$text.getText("Đang xử lý")</option>
+                                                    <option value="processing_ontime">&nbsp;&nbsp;$text.getText("Đang xử lý trong hạn")</option>
+                                                    <option value="processing_lated">&nbsp;&nbsp;$text.getText("Đang xử lý trễ hạn")</option>
+                                                    <option value="completed">$text.getText("Đã xử lý")</option>
+                                                    <option value="completed_ontime">&nbsp;&nbsp;$text.getText("Đã xử lý trong hạn")</option>
+                                                    <option value="completed_lated">&nbsp;&nbsp;$text.getText("Đã xử lý trễ hạn")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="row-fluid" style="text-align:center;padding-top: 10px;">
+                                        <button data-action-search="search" type="button" class="btn btn-success btn-small">
+                                            <i class="icon-search"></i>
+                                            $text.getText("idesk.common.button.search")
+                                        </button>
+                                        <button data-action-search="close" type="button" class="btn btn-danger btn-small">
+                                            <i class="icon-remove"></i>
+                                            $text.getText("idesk.common.button.close")
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="lookup-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

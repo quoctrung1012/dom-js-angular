@@ -1,3 +1,16 @@
+export declare abstract class Renderer2 {
+  abstract createElement(name: string, namespace?: string | null): any;
+  abstract appendChild(parent: any, newChild: any): void;
+}
+
+export declare interface OnInit {
+  ngOnInit(): void;
+}
+
+export declare class ElementRef<T = any> {
+  nativeElement: T;
+}
+
 export class LoadScriptComponent implements OnInit {
   constructor(private renderer: Renderer2,
               private readonly elementRef: ElementRef,) {

@@ -114,3 +114,10 @@ td {
 .color-success {
   color: #28a745 !important
 }
+.width-row {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 4px;
+    border: 1px solid #959393;
+}

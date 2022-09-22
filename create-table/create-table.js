@@ -242,7 +242,7 @@ $(function () {
     var html = '', item = {}, arrayHtml = [];
     for (var i = 0; i < arrayColumns.length; i++) {
       item = arrayColumns[i];
-      html = String.format('<th class="text-center" id="th-{0}" data-id="{1}"><span contenteditable="true">{2}</span></th>', item.name, item.name, item.description)
+      html = String.format('<th class="text-center" id="th-{0}" data-id="{1}"><span contenteditable="true" style="width: 100%">{2}</span><span class="width-row">{3}</span></th>', item.name, item.name, item.description, '')
       arrayHtml.push(html);
     }
     return '<thead><tr>' + arrayHtml.join('') + '</tr></thead>'
@@ -567,8 +567,11 @@ $(function () {
 
   function createResizableTable(tableResize) {
     var cols = tableResize.querySelectorAll('th');
-    Array.prototype.forEach.call(cols, function (col) {
-      col.style.width = col.offsetWidth + 'px';
+    Array.prototype.forEach.call(cols, function (col, index) {
+      var wr = col.getElementsByClassName('width-row');
+      // col.style.width = col.offsetWidth + 'px';
+      col.style.width = index === 0 ? 'auto' : 150 + 'px';
+      wr[0].innerHTML = col.style.width;
       var resizer = document.createElement('div');
       resizer.classList.add('resizer');
       resizer.style.height = tableResize.offsetHeight + 'px';
@@ -592,7 +595,11 @@ $(function () {
 
     function mouseResizableMoveHandler(e) {
       var dx = e.clientX - x;
+      var wr = e.target.getElementsByClassName('width-row');
       col.style.width = (w + dx) + 'px';
+      if (!!wr && wr.length > 0) {
+        wr[0].innerHTML = col.style.width;
+      }
     }
 
     function mouseResizableUpHandler() {

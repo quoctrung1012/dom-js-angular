@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
 <style>
+  .table {
+    margin-bottom: 0.5rem;
+  }
   .outer {
     overflow-y: auto;
     width: 100%;
@@ -19,6 +22,18 @@
     position: sticky;
     background-color: white;
     z-index: 99;
+  }
+  .outer::-webkit-scrollbar {
+    width: 5px;
+  }
+  .outer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .outer::-webkit-scrollbar-thumb {
+    background: #6c757e;
+  }
+  .outer::-webkit-scrollbar-thumb:hover {
+    background: #6c757e;
   }
 </style>
 <body>

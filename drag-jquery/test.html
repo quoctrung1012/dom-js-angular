@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    .item {
+      position: absolute;
+      bottom: 0;
+      border-radius: 80px;
+      background-color: #daecf3;
+      text-align: center;
+      height: 80px;
+      width: 80px;
+    }
+
+    .dropzone, .notzone {
+      height: 500px;
+      width: 500px;
+      border: 1px solid;
+    }
+  </style>
+  <script>
+    $(function(){
+      var zIndex = 0,
+        counts = [0];
+
+      function make_draggable(elements) {
+        elements.draggable({
+          containment: 'parent',
+          start: function(e,ui) {
+            ui.helper.css('z-index', ++zIndex);
+          },
+          stop:function(e, ui) {
+          }
+        });
+      }
+
+      $('.drag').draggable({
+        helper: 'clone',
+        start: function() {
+          counts[0]++;
+        }
+      });
+
+      $('.dropzone').droppable({
+        drop: function(e, ui){
+          let $dropzone = $('.dropzone');
+          if (ui.draggable.hasClass('draggable')) {
+            $(this).append($(ui.helper).clone());
+
+            $dropzone.find('.draggable').addClass('item-' + counts[0]);
+
+            $dropzone.find('.item-' + counts[0]).removeClass('draggable ui-draggable ui-draggable-dragging');
+
+            $dropzone.find('.item-' + counts[0]).dblclick(function() {
+              $(this).remove();
+            });
+
+            make_draggable($dropzone.find('.item-' + counts[0]));
+          }
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+
+<div style="display: flex">
+  <div style="width: 100px">
+    <div class="drag item draggable"></div>
+  </div>
+
+  <div class="dropzone"></div>
+</div>
+
+
+</body>
+</html>

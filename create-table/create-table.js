@@ -182,11 +182,45 @@ $(function () {
     $formColumns.parent().prepend(html)
   }
 
-  // func action
+  var navUser = navigator.userAgent.toLowerCase();
+  var check = function (regex) {
+    return regex.test(navUser);
+  };
+  var isOpera = check(/opera/);
+  var isIE = !isOpera && check(/msie/);
+
+  function toArray() {
+    return isIE ?
+      function (a, i, j, res) {
+        res = [];
+        each(a, function (v) {
+          res.push(v);
+        });
+        return res.slice(i || 0, j || res.length);
+      } :
+      function (a, i, j) {
+        return Array.prototype.slice.call(a, i || 0, j || a.length);
+      };
+  }
+  function each (array, fn, scope) {
+    if (!!array || array.length === 0) {
+      return;
+    }
+    array.forEach(function (arr, index) {
+      if (fn.call(scope || arr, arr, index, array) === false) {
+        return index;
+      }
+    })
+    /*for (var i = 0, len = array.length; i < len; i++) {
+      if (fn.call(scope || array[i], array[i], i, array) === false) {
+        return i;
+      }
+    }*/
+  }
 
   String = {
     format: function (format) {
-      var args = iNet.toArray(arguments, 1);
+      var args = toArray(arguments, 1);
       return format.replace(/\{(\d+)\}/g, function (m, i) {
         return args[i];
       });

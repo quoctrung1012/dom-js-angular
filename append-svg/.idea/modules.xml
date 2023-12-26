@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/create-table.iml" filepath="$PROJECT_DIR$/.idea/create-table.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/append-svg.iml" filepath="$PROJECT_DIR$/.idea/append-svg.iml" />
     </modules>
   </component>
 </project>

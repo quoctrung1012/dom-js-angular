@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload Example</title>
+  <style>
+    #dropzone {
+      border: 2px dashed rgb(128, 128, 128);
+      padding: 20px;
+      text-align: center;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+<div id="dropzone">
+  <p>Drag and drop files here, or click to select files</p>
+  <input type="file" id="file-input" multiple>
+</div>
+<button id="submit-button">Submit</button>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const dropzone = $('#dropzone');
+  const fileInput = $('#file-input');
+  const submitButton = $('#submit-button');
+
+  dropzone.on('dragover', function(event) {
+    event.preventDefault();
+    $(this).addClass('hover');
+  });
+
+  dropzone.on('dragleave', function(event) {
+    event.preventDefault();
+    $(this).removeClass('hover');
+  });
+
+  dropzone.on('drop', function(event) {
+    event.preventDefault();
+    $(this).removeClass('hover');
+
+    fileInput.prop('files', event.originalEvent.dataTransfer.files);
+  });
+
+  fileInput.on('change', function() {
+    const fileList = fileInput.prop('files');
+    console.log(fileList);
+  });
+
+  submitButton.on('click', function() {
+    const fileList = fileInput.prop('files');
+    console.log(fileList);
+  });
+</script>
+</body>
+</html>

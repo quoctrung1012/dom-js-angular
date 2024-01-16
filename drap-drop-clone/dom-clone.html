@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dom Clone</title>
+</head>
+<style>
+    #divLeft {
+        height: 400px;
+        float: left;
+    }
+
+    #divRight {
+        height:400px;
+        float: left;
+    }
+
+    #div1, #div2 {
+        float:left; width:100px; height:35px; margin:10px;padding:10px;border:1px solid #aaaaaa;
+    }
+
+    #divRight1, #divRight2, #divRight3, #divRight4 {
+        height: 55px;
+        width: 55px;
+        border: 1px solid #000;
+    }
+</style>
+<script>
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+  }
+
+  function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    var isLeft = 'drag1' === data || "drag2" === data;
+    var nodeCopy = document.getElementById(data).cloneNode(true);
+    nodeCopy.id = "img" + ev.target.id;
+    if (!isLeft) {
+      sourceNode = document.getElementById(data);
+      sourceNode.parentNode.removeChild(sourceNode);
+    }
+    ev.target.appendChild(nodeCopy);
+    ev.stopPropagation();
+    return false;
+  }
+</script>
+<body>
+<div id="divLeft">
+  <div id="divLeft1">
+    <img src="http://icons.iconarchive.com/icons/designcontest/casino/96/Banana-icon.png" draggable="true" ondragstart="drag(event)" id="drag1" width="50" height="50">
+  </div>
+  <div id="divLeft2">
+    <img src="http://icons.iconarchive.com/icons/rokey/smooth/128/apple-icon.png" draggable="true" ondragstart="drag(event)" id="drag2" width="50" height="50">
+  </div>
+</div>
+<div id="divRight">
+  <div id="divRight1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="divRight2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="divRight3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="divRight4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+</div>
+</body>
+</html>

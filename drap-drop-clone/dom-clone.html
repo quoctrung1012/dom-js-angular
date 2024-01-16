@@ -40,6 +40,7 @@
     var isLeft = 'drag1' === data || "drag2" === data;
     var nodeCopy = document.getElementById(data).cloneNode(true);
     nodeCopy.id = "img" + ev.target.id;
+    var sourceNode;
     if (!isLeft) {
       sourceNode = document.getElementById(data);
       sourceNode.parentNode.removeChild(sourceNode);

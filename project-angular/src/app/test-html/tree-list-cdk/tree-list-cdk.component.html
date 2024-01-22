@@ -1,0 +1,74 @@
+<div style="width: 100%; height: 50px; background-color: #fff">
+  <button class="btn btn-secondary" (click)="onBack()">Back</button>
+</div>
+<ng-template #tmplNode let-node="node">
+  <div class="node-item" [attr.data-id]="node.id" [attr.id]="'node-'+node.id">
+    <div class="node-title" (click)="node.isExpanded=!node.isExpanded">
+      <span class="item-notes-title">
+        <i class="item-notes-icon fa {{node.children.length === 0 ? '' :node.isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'}}"></i>
+        <span class="ml-3">{{ node.id }}</span>
+      </span>
+      <span class="item-notes"> ({{ node.children.length }}{{ node.children.length ? ', expanded: ' + !!node.isExpanded : '' }})</span>
+    </div>
+
+    <div *ngIf="node.isExpanded && node.children.length" class="node-children"
+         cdkDropList
+         [cdkDropListData]="node.children"
+         [cdkDropListConnectedTo]="dropTreeTargetIds"
+         (cdkDropListDropped)="dropListDropped($event)"
+         [cdkDropListSortingDisabled]="true"
+         [id]="node.id">
+
+      <div *ngFor="let child of node.children" cdkDrag [cdkDragData]="child.id"
+           (cdkDragMoved)="dragMoved($event)">
+        <ng-container *ngTemplateOutlet="tmplNode,context:{node:child}"></ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<cdk-tree cdkDropList
+          [cdkDropListConnectedTo]="dropTreeTargetIds"
+          (cdkDropListDropped)="dropListDropped($event)"
+          [cdkDropListSortingDisabled]="true"
+          [cdkDropListData]="treeNodes"
+          [dataSource]="dataSource"
+          [treeControl]="treeControl"
+          [id]="mainId.tree">
+  <cdk-nested-tree-node *cdkTreeNodeDef="let node"
+                        cdkDrag [cdkDragData]="node.id"
+                        [cdkDragDisabled]="node.children.length > 0"
+                        (cdkDragMoved)="dragMoved($event)">
+
+    <ng-container *ngTemplateOutlet="tmplNode,context:{node:node}"></ng-container>
+
+  </cdk-nested-tree-node>
+</cdk-tree>
+<div id="node-tree-empty" class="node-item" *ngIf="treeNodes.length === 0">
+  <div class="node-title">{{ 'No data tree' }}</div>
+</div>
+<div style="width: 100%; height: 50px; background-color: #fff"></div>
+<div class="w-100"
+     cdkDropList
+     [cdkDropListConnectedTo]="dropTreeTargetIds"
+     (cdkDropListDropped)="dropListDropped($event)"
+     [cdkDropListSortingDisabled]="true"
+     [cdkDropListData]="listNodes"
+     [id]="mainId.list">
+  <div class="node-item" *ngFor="let _node of listNodes"
+       [attr.data-id]="_node.id"
+       [attr.id]="'node-'+_node.id"
+       cdkDrag [cdkDragData]="_node.id" (cdkDragMoved)="dragMoved($event)">
+    <div class="node-title">{{ _node.id }}</div>
+  </div>
+  <div id="node-list-empty" class="node-item" *ngIf="listNodes.length === 0">
+    <div class="node-title">{{ 'No data list' }}</div>
+  </div>
+</div>
+
+
+<hr/>
+<p><strong>current drag drop action:</strong></p>
+<pre>{{ dropActionTodo|json }}</pre>
+<hr/>
+<p><strong>tree data</strong></p>
+<pre>{{ treeNodes|json }}</pre>

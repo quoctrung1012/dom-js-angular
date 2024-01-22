@@ -1,0 +1,9 @@
+<button class="btn btn-secondary" (click)="onView()">Tree view</button>
+<div class="example-list">
+  @for (movie of movies; track movie) {
+    <div class="example-box">{{movie}}</div>
+  }
+</div>
+<div style="margin-top: 20px">
+  <div *ngFor="let movie of movies">{{movie}}</div>
+</div>
